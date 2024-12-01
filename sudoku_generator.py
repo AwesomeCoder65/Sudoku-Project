@@ -1,4 +1,7 @@
-import math,random
+import math
+import random
+import pygame
+import sys
 
 """
 This was adapted from a GeeksforGeeks article "Program for Sudoku Generator" by Aarti_Rathi and Ankur Trisal
@@ -12,7 +15,7 @@ class SudokuGenerator:
 	This should initialize:
 	self.row_length		- the length of each row
 	self.removed_cells	- the total number of cells to be removed
-	self.board			- a 2D list of ints to represent the board
+	#self.board			- a 2D list of ints to represent the board
 	self.box_length		- the square root of row_length
 
 	Parameters:
@@ -23,16 +26,19 @@ class SudokuGenerator:
 	None
     '''
     def __init__(self, row_length, removed_cells):
-        pass
+        self.row_length = row_length
+        self.board = [[0 for _ in range(row_length)] for _ in range(row_length)]
+        self.removed_cells = int(removed_cells)
+        self.box_length = int(math.sqrt(row_length))
 
-    '''
+        '''
 	Returns a 2D python list of numbers which represents the board
 
 	Parameters: None
 	Return: list[list]
     '''
     def get_board(self):
-        pass
+        return self.board
 
     '''
 	Displays the board to the console
@@ -55,7 +61,11 @@ class SudokuGenerator:
 	Return: boolean
     '''
     def valid_in_row(self, row, num):
-        pass
+        for i in range(9):
+            if self.board[row][i] == num:
+                return False
+        return True
+
 
     '''
 	Determines if num is contained in the specified column (vertical) of the board
@@ -68,7 +78,10 @@ class SudokuGenerator:
 	Return: boolean
     '''
     def valid_in_col(self, col, num):
-        pass
+        for i in range(9):
+            if self.board[i][col] == num:
+                return False
+        return True
 
     '''
 	Determines if num is contained in the 3x3 box specified on the board
@@ -83,7 +96,14 @@ class SudokuGenerator:
 	Return: boolean
     '''
     def valid_in_box(self, row_start, col_start, num):
-        pass
+        for s in range(3):
+            for i in range(3):
+                if row_start + i < self.row_length and col_start + s < self.row_length:
+                    if self.board[row_start + i][col_start + s] == num:
+                        return False
+        return True
+
+
     
     '''
     Determines if it is valid to enter num at (row, col) in the board
@@ -96,7 +116,11 @@ class SudokuGenerator:
 	Return: boolean
     '''
     def is_valid(self, row, col, num):
-        pass
+        if self.valid_in_row(row, num):
+            if self.valid_in_col(col, num):
+                if self.valid_in_box(row, col, num):
+                    return True
+        return False
 
     '''
     Fills the specified 3x3 box with values
@@ -109,7 +133,14 @@ class SudokuGenerator:
 	Return: None
     '''
     def fill_box(self, row_start, col_start):
-        pass
+        digits = [1,2,3,4,5,6,7,8,9]
+        for s in range(3):
+            for i in range(3):
+                random_num = random.choice(digits)
+                if self.is_valid(row_start+i, col_start+s, random_num):
+                    self.board[row_start+i][col_start+s] = random_num
+                    digits.remove(random_num)
+
     
     '''
     Fills the three boxes along the main diagonal of the board
@@ -119,7 +150,11 @@ class SudokuGenerator:
 	Return: None
     '''
     def fill_diagonal(self):
-        pass
+        digits=[1,2,3,4,5,6,7,8,9]
+        random.shuffle(digits)
+        self.board[0][0] = digits[0]
+        self.board[3][3] = digits[1]
+        self.board[3][3] = digits[2]
 
     '''
     DO NOT CHANGE
@@ -185,7 +220,14 @@ class SudokuGenerator:
 	Return: None
     '''
     def remove_cells(self):
-        pass
+        for i in range(self.removed_cells):
+            rand_col = random.randint(0,self.row_length-1)
+            rand_row = random.randint(0,self.row_length-1)
+            if self.board[rand_row][rand_col] != 0:
+                self.board[rand_row][rand_col] = 0
+            else:
+                i-= 1
+
 
 '''
 DO NOT CHANGE
@@ -209,3 +251,122 @@ def generate_sudoku(size, removed):
     sudoku.remove_cells()
     board = sudoku.get_board()
     return board
+
+
+
+class Cell:
+   # when testing in pycharm, set do:
+   # cell = Cell(0, 9, 9, screen)
+   # cell.draw()
+   def __init__(self, value, row, col, screen):
+       self.value = value
+       self.row = row
+       self.col = col
+       self.screen = screen
+       self.sketched_value = 0
+       self.selected = False
+
+
+   def set_cell(self, value):
+       self.value = value
+
+
+   def set_sketched_value(self, value):
+       self.sketched_value = value
+
+
+   def draw(self):
+       for x in range(50, 450, 50):
+           pygame.draw.line(screen, "purple", (x, 0), (x, 450), width=1)
+           for x in range(150, 450, 150):
+               pygame.draw.line(screen, "black", (x, 0), (x, 450), width=3)
+       for y in range(50, 450, 50):
+           pygame.draw.line(screen, "purple", (0, y), (450, y), width=1)
+           for y in range(150, 450, 150):
+               pygame.draw.line(screen, "black", (0, y), (450, y), width=3)
+
+
+
+
+
+	#Draws this cell, along with the value inside it.
+	#If this cell has a nonzero value, that value is displayed.
+	#Otherwise, no value is displayed in the cell.
+	#The cell is outlined red if it is currently selected.
+
+class Board:
+
+    def __init__(self, width, height, screen, difficulty):
+        self.width = width
+        self.height = height
+        self.screen = screen
+        self.difficulty = difficulty
+
+    def draw(self):
+        pass
+
+
+
+    def select(self, row, col):
+        pass
+
+    def click(self, row, col):
+        pass
+
+
+    def clear(self):
+        pass
+
+
+    def sketch(self, value):
+        pass
+
+
+    def place_number(self, value):
+        pass
+
+
+    def reset_to_original(self):
+        pass
+
+    def is_full(self):
+        pass
+
+
+    def update_board(self):
+        pass
+
+    def find_empty(self):
+        pass
+
+    def check_board(self):
+        pass
+
+
+def main():
+    difficulty = 50
+    board = generate_sudoku(9, difficulty)
+    for row in board:
+        print(row)
+
+
+if __name__ == "__main__":
+   pygame.init()
+   screen = pygame.display.set_mode((450, 450))
+   pygame.display.set_caption("Sudoku")
+   screen.fill("white")
+   running = True
+
+
+   cell = Cell(0, 9, 9, screen)
+   cell.draw()
+
+
+   while running:
+       for event in pygame.event.get():
+           if event.type == pygame.QUIT:
+               pygame.quit()
+               running = False
+
+
+       pygame.display.update()
