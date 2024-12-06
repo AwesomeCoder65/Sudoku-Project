@@ -459,7 +459,7 @@ def game_lose_screen(screen):
   screen.fill("orange")
   title_font = pygame.font.Font(None, 70)
   end_screen_button_font = pygame.font.Font(None, 40)
-  title_surface = title_font.render("YOU SUCK!", 0, "blue")
+  title_surface = title_font.render("YOU LOSE", 0, "blue")
   title_rect = title_surface.get_rect(
   center=(450 // 2, 600 // 2 - 150))
   screen.blit(title_surface, title_rect)
