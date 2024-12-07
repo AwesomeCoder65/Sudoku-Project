@@ -426,6 +426,11 @@ def sudoku_screen(screen, difficulty):
                                        game_lose_screen(screen)
                            else:
                                game_lose_screen(screen)
+                   elif event.key == pygame.K_BACKSPACE:
+                       if selected_cell and not selected_cell.original:
+                           selected_cell.value = 0
+                           selected_cell.sketched_value = None
+                           value = None
 
        screen.fill("light blue")
        board.draw()
